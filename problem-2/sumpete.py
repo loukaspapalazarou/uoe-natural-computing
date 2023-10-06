@@ -107,8 +107,31 @@ def crossover(parent1, parent2):
 
 
 def solver(
-    problem, generations=1000, population_size=100, mutation_rate=0.01, fitness="binary"
+    problem,
+    generations=1000,
+    population_size=100,
+    fitness="binary",
+    k_best_rate=0.1,
+    breeding_rate=0.5,
+    crossover_point_rate=0.3,
+    mutation_rate=0.01,
 ):
+    """function(a, b) -> list""" """
+    Solve a binary matrix optimization problem using a genetic algorithm.
+
+    Parameters:
+    - problem (str): A formatted problem string containing the matrix and target sums.
+    - generations (int, optional): The number of generations for the genetic algorithm. Default is 1000.
+    - population_size (int, optional): The size of the population in each generation. Default is 100.
+    - fitness (str, optional): The fitness function to use ("binary" or "improved"). Default is "binary".
+    - k_best_rate (float, optional): The rate of selecting the top-performing candidates as parents. Default is 0.1.
+    - breeding_rate (float, optional): The rate of candidates that will be bred in each generation. Default is 0.5.
+    - crossover_point_rate (float, optional): The rate of crossover points when performing crossover. Default is 0.3.
+    - mutation_rate (float, optional): The rate of mutation in candidate solutions. Default is 0.01.
+
+    Returns:
+    ?
+    """
     try:
         k = validate_input(problem)
         print(f"Input is valid, detected size: {int(k)}")
@@ -119,12 +142,29 @@ def solver(
     # print(generate_random_solution(10))
 
     population = [generate_random_solution(k) for _ in range(population_size)]
-    for i, p in enumerate(population):
-        f = fitness_binary(problem, p)
-        print(i, p, f)
 
-    # print(fitness_binary(problem, "0,0,0,0"))
+    for generation in range(generations):
+        # Calculate fitness of each candidate solution
+        # Place the result in a list of tuples like so: [(candidate_1, fitness_1), ..., (candidate_N, fitness_N)]
+        # This is done to keep a reference to the original population matrix after sorting by the fitness score
+        if fitness == "binary":
+            fitness_scores = [
+                (i, fitness_binary(problem, candidate))
+                for i, candidate in enumerate(population)
+            ]
+        elif fitness == "improved":
+            fitness_scores = [
+                (i, fitness_improved(problem, candidate))
+                for i, candidate in enumerate(population)
+            ]
+        else:
+            raise ValueError(f"The '{fitness}' fitness function does not exist.")
+
+        fitness_scores = sorted(fitness_scores, key=lambda x: x[1], reverse=True)
+        print(fitness_scores)
+        print()
+        # print(fitness_binary(problem, "1,0,0,0"))
 
 
 # solver("6,3,1,7,9,3,9,5,8;1,12,17;9,9,12")
-solver("0,0,0,0;0,0;0,0")
+solver("1,0,0,0;1,0;1,0")
