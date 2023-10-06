@@ -249,7 +249,7 @@ def solver(
     verbose=True,
 ):
     """
-    Solve a binary matrix optimization problem using a genetic algorithm.
+    Sumplete game solver using a genetic algorithm
 
     Parameters:
     - problem (str): A formatted problem string containing the matrix and target sums.
@@ -270,8 +270,8 @@ def solver(
     if verbose:
         print(f"Input is valid, detected size: {int(k)}")
 
-    if not 0 <= n_best <= population_size:
-        raise ValueError("k_best should be between 0 and K")
+    if not 0 <= n_best <= 1:
+        raise ValueError("k_best should be between 0 and 1")
     if not 0 <= breeding_rate <= 1:
         raise ValueError("breeding should be between 0 and 1")
     if not 0 <= crossover_rate <= 1:
