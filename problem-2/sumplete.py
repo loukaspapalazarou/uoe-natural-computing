@@ -247,6 +247,8 @@ def solver(
     crossover_rate=0.1,
     mutation_rate=0.01,
     verbose=True,
+    output_graph_name="output.png",
+    tid=None,
 ):
     """
     Sumplete game solver using a genetic algorithm
@@ -261,6 +263,8 @@ def solver(
     - crossover_rate (float, optional): The percentage of the genes that will be taken from parent 1 when performing crossover. Default is 0.5.
     - mutation_rate (float, optional): The rate of mutation in candidate solutions. Default is 0.01.
     - verbose (bool, optional): Whether to print debug information. Default is True.
+    - output_graph_name (str, optional): The name of the generated graph of the best fitness in terms of the generation. Default is "output.png".
+    - tid (int, optional): If a thread id is given it will be displayed in the log messages. Default is None
 
     Returns:
     - The solution if it is found, otherwise -1
@@ -299,12 +303,16 @@ def solver(
                 if verbose:
                     print("\n")
                     print_problem(problem)
+                    if tid:
+                        print(f"TID:{tid} | ", end="")
                     print(f"Solution found in generation {generation}: {population[i]}")
                 return population[i]
             population[i] = (population[i], fitness_val)
             best_fitness = max(best_fitness, fitness_val)
 
-        if verbose:
+        if verbose and generation % 100 == 0:
+            if tid:
+                print(f"TID:{tid} | ", end="")
             print(f"Generation {generation}. Best fitness: {best_fitness}")
 
         # We now can sort the population based on fitness
@@ -331,5 +339,7 @@ def solver(
             new_population.append(generate_random_solution(k))
         population = new_population[:population_size]
     if verbose:
-        print("No solution found")
+        if tid:
+            print(f"TID:{tid} | ", end="")
+        print(f"No solution found.")
     return -1
