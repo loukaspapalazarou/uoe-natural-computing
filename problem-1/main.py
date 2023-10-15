@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-import threading
 
 
 def rastrigin(x, d):
@@ -78,13 +77,12 @@ class PSO:  # all the material that is relavant at swarm leveel
         self.a1 = a1  # Attraction to personal best
         self.a2 = a2  # Attraction to global best
         self.dim = dim
-        self.tid = threading.get_native_id()
 
         self.swarm = [
             Particle(dim, -search_range, search_range) for i in range(population_size)
         ]
         self.time_steps = time_steps
-        print(f"{self.tid}\t| Initialization - Dimensions: {self.dim}")
+        print(f"Initialization - Dimensions: {self.dim}")
 
         # Initialising global best, you can wait until the end of the first time step
         # but creating a random initial best and fitness which is very high will mean you
@@ -112,7 +110,7 @@ class PSO:  # all the material that is relavant at swarm leveel
                 ):  # The search will be terminated if the distance
                     # of any particle from center is too large
                     print(
-                        f"{self.tid}\t| Time:",
+                        "Time:",
                         t,
                         "Best Pos:",
                         self.best_swarm_pos,
@@ -137,7 +135,7 @@ class PSO:  # all the material that is relavant at swarm leveel
                 t % 100 == 0
             ):  # we print only two components even it search space is high-dimensional
                 print(
-                    f"{self.tid}\t| Time: %6d,  Best Fitness: %14.6f,  Best Pos: %9.4f,%9.4f"
+                    "Time: %6d,  Best Fitness: %14.6f,  Best Pos: %9.4f,%9.4f"
                     % (
                         t,
                         self.best_swarm_fitness,
@@ -153,51 +151,35 @@ class PSO:  # all the material that is relavant at swarm leveel
         return float("inf")
 
 
-# time_steps_to_optimum = PSO(
-#     dim=6,
-#     w=0.7,
-#     a1=2.02,
-#     a2=2.02,
-#     population_size=30,
-#     time_steps=1000,
-#     search_range=5.12,
-# ).run()
+time_steps_to_optimum = PSO(
+    dim=6,
+    w=0.7,
+    a1=2.02,
+    a2=2.02,
+    population_size=30,
+    time_steps=1000,
+    search_range=5.12,
+).run()
 
-
-def test_pso(particles, results, dimension):
-    time_steps = PSO(
-        dim=dimension,
-        w=0.7,
-        a1=2.02,
-        a2=2.02,
-        population_size=particles,
-        time_steps=1000,
-        search_range=5.12,
-    ).run()
-
-    results.append((particles, time_steps))
-
-
-MAX_PARTICLES = 1001
-PARTICLE_STEP = 5
-DIMENSIONS = range(2, 8)
-
+MAX_TIME_STEPS = 10000
+DIMENSIONS = range(2, 9)
+PARTICLE_COUNTS = range(5, 1001, 5)
+results = []
 for dimension in DIMENSIONS:
-    results = []
-    threads = []
-
-    for particles in range(5, MAX_PARTICLES, PARTICLE_STEP):
-        thread = threading.Thread(target=test_pso, args=(particles, results, dimension))
-        threads.append(thread)
-        thread.start()
-
-    # Wait for all threads to finish
-    for thread in threads:
-        thread.join()
+    for particle_count in PARTICLE_COUNTS:
+        time_steps = PSO(
+            dim=dimension,
+            w=0.7,
+            a1=2.02,
+            a2=2.02,
+            population_size=particle_count,
+            time_steps=MAX_TIME_STEPS,
+            search_range=5.12,
+        ).run()
+        results.append((particle_count, time_steps))
 
     results = sorted(results, key=lambda x: x[0])
     x_values, y_values = zip(*results)
-    # plt.bar([str(x) for x in x_values], y_values)
     plt.bar(x_values, y_values)
     plt.xlabel("Population size")
     plt.ylabel("Time steps to optimum")
