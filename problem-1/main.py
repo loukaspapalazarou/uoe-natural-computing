@@ -7,20 +7,6 @@ def rastrigin(x, d):
     return 10 * d + sum([xi**2 - 10 * math.cos(2 * math.pi * xi) for xi in x])
 
 
-def rosenbrock(pos, dim):  # this serves as a goal function
-    # Defined by f(x,y) = (a-x)^2 + b(y-x^2)^2
-    # Using here: a = 1, b= 100, optimum 0 at (1,1)
-    if dim == 2:
-        return (1 - pos[0]) ** 2 + 100 * (pos[1] - pos[0] ** 2) ** 2
-    elif dim == 1:
-        return (1 - pos[0]) ** 2
-    else:
-        ros = 0
-        for i in range(dim - 1):
-            ros = ros + 100 * (pos[i + 1] - pos[i] ** 2) ** 2 * (1 - pos[i]) ** 2
-        return ros
-
-
 class Particle:  # all the material that is relavant at the level of the individual particles
     def __init__(self, dim, minx, maxx):
         self.position = np.random.uniform(low=minx, high=maxx, size=dim)

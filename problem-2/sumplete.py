@@ -1,6 +1,6 @@
 import math
 import random
-
+import matplotlib.pyplot as plt
 
 def generate_problem(k: int, max_num: int = 100):
     """
@@ -236,6 +236,25 @@ def crossover(parent1: str, parent2: str, crossover_point_rate: float) -> (str, 
     child2 = parent2[:pivot] + parent1[pivot:]
     return child1, child2
 
+def create_graph(filename, generations, fitnesses):
+    """
+    Create a graph to visualize the best fitness scores over the generations.
+
+    Parameters:
+    - filename (str): The name of the output graph file (e.g., "output.png").
+    - generations (list): A list of generation numbers.
+    - fitnesses (list): A list of corresponding best fitness scores.
+
+    Returns:
+    - None
+    """
+    plt.figure(figsize=(10, 6))
+    plt.plot(generations, fitnesses, linestyle='-')
+    plt.title('Best Fitness Score Over Generations')
+    plt.xlabel('Generation')
+    plt.ylabel('Best Fitness Score')
+    plt.grid(True)
+    plt.savefig(filename)
 
 def solver(
     problem,
@@ -243,8 +262,8 @@ def solver(
     population_size=10,
     fitness="binary",
     n_best=0.4,
-    breeding_rate=0.1,
-    crossover_rate=0.1,
+    breeding_rate=0.3,
+    crossover_rate=0.5,
     mutation_rate=0.01,
     verbose=True,
     output_graph_name="output.png",
@@ -285,6 +304,9 @@ def solver(
 
     population = [generate_random_solution(k) for _ in range(population_size)]
     best_fitness = 0
+    generation_best_fitnesses = []
+    if tid:
+        output_graph_name = "f{tid}_"+output_graph_name
 
     for generation in range(generations):
         # Calculate fitness of each candidate solution
@@ -306,9 +328,12 @@ def solver(
                     if tid:
                         print(f"TID:{tid} | ", end="")
                     print(f"Solution found in generation {generation}: {population[i]}")
+                    create_graph(output_graph_name, range(generation), generation_best_fitnesses)
                 return population[i]
             population[i] = (population[i], fitness_val)
             best_fitness = max(best_fitness, fitness_val)
+        
+        generation_best_fitnesses.append(best_fitness)
 
         if verbose and generation % 100 == 0:
             if tid:
@@ -339,6 +364,7 @@ def solver(
             new_population.append(generate_random_solution(k))
         population = new_population[:population_size]
     if verbose:
+        create_graph(output_graph_name, range(generations), generation_best_fitnesses)
         if tid:
             print(f"TID:{tid} | ", end="")
         print(f"No solution found.")
