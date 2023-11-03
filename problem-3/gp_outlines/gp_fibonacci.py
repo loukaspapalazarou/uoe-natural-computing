@@ -6,4 +6,4 @@ FUNCTIONS = [add, sub, mul]
 TERMINALS = ['x', -2, -1, 0, 1, 2]
 
 def target_func(x): # evolution's target
-    return x*x + 2*x + 1
+    return x*x + 2*x

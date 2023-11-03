@@ -22,6 +22,13 @@ class GPTree:
         else: 
             return str(self.data)
     
+    def equation_string(self):
+        if self.left is None and self.right is None:
+            return str(self.node_label())
+        left_str = self.left.equation_string() if self.left else ""
+        right_str = self.right.equation_string() if self.right else ""
+        return f"({left_str} {self.node_label()} {right_str})"
+    
     def print_tree(self, prefix = ""): # textual printout
         print("%s%s" % (prefix, self.node_label()))        
         if self.left:  self.left.print_tree (prefix + "   ")
@@ -175,3 +182,4 @@ def run(functions,
     print("\n\n_________________________________________________\nEND OF RUN\nbest_of_run attained at gen " + str(best_of_run_gen) +\
         " and has f=" + str(round(best_of_run_f,3)))
     best_of_run.print_tree()
+    print("Function:",best_of_run.equation_string())

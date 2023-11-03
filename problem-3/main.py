@@ -1,4 +1,4 @@
-from gp_outlines.gp_func import FUNCTIONS, TERMINALS, target_func
+from gp_outlines.gp_fibonacci import FUNCTIONS, TERMINALS, target_func
 from gp import run
 
 POP_SIZE        = 60   # population size
@@ -11,14 +11,14 @@ PROB_MUTATION   = 0.2  # per-node mutation probability
 
 if __name__ == '__main__':
     run(
-        FUNCTIONS,
-        TERMINALS,
-        target_func,
-        POP_SIZE,
-        MIN_DEPTH,
-        MAX_DEPTH,
-        GENERATIONS,
-        TOURNAMENT_SIZE,
-        XO_RATE,
-        PROB_MUTATION
+        functions = FUNCTIONS, 
+        terminals = TERMINALS,
+        target_func = target_func,
+        pop_size = POP_SIZE,
+        min_depth = MIN_DEPTH,
+        max_depth = MAX_DEPTH,
+        generations = GENERATIONS,
+        tournament_size = TOURNAMENT_SIZE,
+        xo_rate = XO_RATE,
+        prob_mutation = PROB_MUTATION
         )
