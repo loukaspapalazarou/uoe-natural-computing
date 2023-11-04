@@ -68,7 +68,7 @@ class PSO:  # all the material that is relavant at swarm leveel
             Particle(dim, -search_range, search_range) for i in range(population_size)
         ]
         self.time_steps = time_steps
-        print(f"Initialization - Dimensions: {self.dim}")
+        print(f"Initialization - Dimensions: {self.dim}, Population Size: {population_size}")
 
         # Initialising global best, you can wait until the end of the first time step
         # but creating a random initial best and fitness which is very high will mean you
@@ -78,7 +78,9 @@ class PSO:  # all the material that is relavant at swarm leveel
 
     def run(self) -> int:
         for t in range(self.time_steps):
-            if math.isclose(self.best_swarm_fitness, 0):
+            # if math.isclose(self.best_swarm_fitness, 0):
+            #     return t
+            if self.best_swarm_fitness == 0:
                 return t
             for p in range(len(self.swarm)):
                 particle = self.swarm[p]
@@ -135,41 +137,37 @@ class PSO:  # all the material that is relavant at swarm leveel
                 else:
                     print("")
         return float("inf")
+    
 
+MAX_TIME_STEPS = 1000
+DIMENSIONS = range(2, 6)
+PARTICLE_COUNTS = range(1, 201, 2)
+REPETITIONS = 5
 
-time_steps_to_optimum = PSO(
-    dim=6,
-    w=0.7,
-    a1=2.02,
-    a2=2.02,
-    population_size=30,
-    time_steps=1000,
-    search_range=5.12,
-).run()
-
-MAX_TIME_STEPS = 10000
-DIMENSIONS = range(2, 9)
-PARTICLE_COUNTS = range(5, 1001, 5)
-results = []
+results = np.zeros(len(PARTICLE_COUNTS))
 for dimension in DIMENSIONS:
-    for particle_count in PARTICLE_COUNTS:
-        time_steps = PSO(
-            dim=dimension,
-            w=0.7,
-            a1=2.02,
-            a2=2.02,
-            population_size=particle_count,
-            time_steps=MAX_TIME_STEPS,
-            search_range=5.12,
-        ).run()
-        results.append((particle_count, time_steps))
+    for rep in range(REPETITIONS):
+        time_steps_of_run = []
+        for particle_count in PARTICLE_COUNTS:
+            time_steps = PSO(
+                dim=dimension,
+                w=0.7,
+                a1=2.02,
+                a2=2.02,
+                population_size=particle_count,
+                time_steps=MAX_TIME_STEPS,
+                search_range=5.12,
+            ).run()
+            time_steps_of_run.append(time_steps)
+        results += np.array(time_steps_of_run)
+    
+    time_steps_avg = results / REPETITIONS
 
-    results = sorted(results, key=lambda x: x[0])
-    x_values, y_values = zip(*results)
-    plt.bar(x_values, y_values)
+    plt.plot(PARTICLE_COUNTS, time_steps_avg)
+    plt.grid()
     plt.xlabel("Population size")
     plt.ylabel("Time steps to optimum")
     plt.title(f"PSO - Rastrigin - Dimensions: {dimension}")
-    filename = f"pso_rastrigin_dimension_{dimension}.png"
+    filename = f"pso_rastrigin_dimension_{dimension}.pdf"
     plt.savefig(filename)
     plt.clf()

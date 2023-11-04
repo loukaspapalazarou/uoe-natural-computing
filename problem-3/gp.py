@@ -133,7 +133,6 @@ def run(functions,
     TERMINALS = terminals
     global TARGET_FUNC
     TARGET_FUNC = target_func
-
     global POP_SIZE
     POP_SIZE = pop_size
     global MIN_DEPTH
@@ -148,10 +147,6 @@ def run(functions,
     XO_RATE = xo_rate
     global PROB_MUTATION
     PROB_MUTATION = prob_mutation
-
-    # Rest of your code goes here...
-
-    # complete code...
 
     dataset = generate_dataset()
     population = init_population() 

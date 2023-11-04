@@ -1,4 +1,4 @@
-from gp_outlines.gp_fibonacci import FUNCTIONS, TERMINALS, target_func
+from gp_outlines.gp_func import FUNCTIONS, TERMINALS, target_func
 from gp import run
 
 POP_SIZE        = 60   # population size

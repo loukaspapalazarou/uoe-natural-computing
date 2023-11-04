@@ -286,7 +286,7 @@ def solver(
     - tid (int, optional): If a thread id is given it will be displayed in the log messages. Default is None
 
     Returns:
-    - The solution if it is found, otherwise -1
+    - A tuple with the solution if it is found and the generation the solution was found in, otherwise None
     """
     # k is the detected dimension of the matrix
     k = validate_input(problem)
@@ -329,7 +329,7 @@ def solver(
                         print(f"TID:{tid} | ", end="")
                     print(f"Solution found in generation {generation}: {population[i]}")
                     create_graph(output_graph_name, range(generation), generation_best_fitnesses)
-                return population[i]
+                return (population[i], generation)
             population[i] = (population[i], fitness_val)
             best_fitness = max(best_fitness, fitness_val)
         
@@ -368,4 +368,4 @@ def solver(
         if tid:
             print(f"TID:{tid} | ", end="")
         print(f"No solution found.")
-    return -1
+    return None
