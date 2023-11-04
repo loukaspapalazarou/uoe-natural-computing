@@ -12,8 +12,7 @@ n_best_list = [0.01, 0.05, 0.1, 0.2, 0.4]
 breeding_rate_list = [0.1, 0.2, 0.3, 0.4]
 crossover_rate_list = [0.1, 0.3, 0.5]
 mutation_rate_list = [0.01, 0.05, 0.1]
-problems = [generate_problem(PROBLEM_SIZE) * NUM_PROBLEMS]
-
+problems = [generate_problem(PROBLEM_SIZE)] * NUM_PROBLEMS
 
 best_solution = None
 best_params = {}
