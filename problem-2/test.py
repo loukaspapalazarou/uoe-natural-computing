@@ -1,9 +1,13 @@
 import itertools
 import json
+import logging
 from sumplete import solver, generate_problem
 
-PROBLEM_SIZE = 1
-NUM_PROBLEMS = 1
+# Configure the logging module to write logs to a file named "out.log"
+logging.basicConfig(filename='out.log', level=logging.INFO)
+
+PROBLEM_SIZE = 5
+NUM_PROBLEMS = 3
 
 # Define the parameter grid for the grid search
 population_size_list = [10, 20, 50, 100, 150, 200]
@@ -18,9 +22,6 @@ best_solution = None
 best_params = {}
 best_generation = float('inf')
 generations = 10_000
-
-logfile = open("out.log", "w")
-
 for (
     population_size,
     fitness,
@@ -36,8 +37,8 @@ for (
     crossover_rate_list,
     mutation_rate_list,
 ):
-    logfile.write(f"Testing parameters: population_size={population_size}, fitness={fitness}, n_best={n_best}, breeding_rate={breeding_rate}, crossover_rate={crossover_rate}, mutation_rate={mutation_rate}")
-    # print(f"Testing parameters: population_size={population_size}, fitness={fitness}, n_best={n_best}, breeding_rate={breeding_rate}, crossover_rate={crossover_rate}, mutation_rate={mutation_rate}")
+    # Use the logging module to log information
+    logging.info(f"Testing parameters: population_size={population_size}, fitness={fitness}, n_best={n_best}, breeding_rate={breeding_rate}, crossover_rate={crossover_rate}, mutation_rate={mutation_rate}")
     sols = []
     for problem in problems:
         sol = solver(
@@ -68,11 +69,8 @@ for (
         }
         best_generation = sol
 
-json.dump(best_params, logfile)
-logfile.close()
 with open("best_params.txt", "w") as f:
     json.dump(best_params, f)
 
 print()
 print("Best Parameters:", best_params)
-
