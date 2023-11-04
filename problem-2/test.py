@@ -1,76 +1,74 @@
+import itertools
+import json
 from sumplete import solver, generate_problem
-import threading
+
+PROBLEM_SIZE = 1
+NUM_PROBLEMS = 1
+
+# Define the parameter grid for the grid search
+population_size_list = [10, 20, 50, 100, 150, 200]
+fitness_list = ["binary", "scalar"]
+n_best_list = [0.01, 0.05, 0.1, 0.2, 0.4]
+breeding_rate_list = [0.1, 0.2, 0.3, 0.4]
+crossover_rate_list = [0.1, 0.3, 0.5]
+mutation_rate_list = [0.01, 0.05, 0.1]
+problems = [generate_problem(PROBLEM_SIZE) * NUM_PROBLEMS]
 
 
-def solve_problem(
-    problem,
-    generations,
+best_solution = None
+best_params = {}
+best_generation = float('inf')
+generations = 10_000
+
+for (
     population_size,
     fitness,
     n_best,
     breeding_rate,
     crossover_rate,
     mutation_rate,
-    verbose,
-    output_graph_name,
-    tid,
+) in itertools.product(
+    population_size_list,
+    fitness_list,
+    n_best_list,
+    breeding_rate_list,
+    crossover_rate_list,
+    mutation_rate_list,
 ):
-    solver(
-        problem=problem,
-        generations=generations,
-        population_size=population_size,
-        fitness=fitness,
-        n_best=n_best,
-        breeding_rate=breeding_rate,
-        crossover_rate=crossover_rate,
-        mutation_rate=mutation_rate,
-        verbose=verbose,
-        output_graph_name=output_graph_name,
-        tid=tid,
-    )
+    print(f"Testing parameters: population_size={population_size}, fitness={fitness}, n_best={n_best}, breeding_rate={breeding_rate}, crossover_rate={crossover_rate}, mutation_rate={mutation_rate}")
+    sols = []
+    for problem in problems:
+        sol = solver(
+            problem=problem,
+            generations=generations,
+            population_size=population_size,
+            fitness=fitness,
+            n_best=n_best,
+            breeding_rate=breeding_rate,
+            crossover_rate=crossover_rate,
+            mutation_rate=mutation_rate,
+            verbose=False,
+            output_graph_name=None
+        )
+        sols.append(sol[1])
+    
+    sol = int(sum(sols) / len(sols))
 
+    if sol < best_generation:
+        best_params = {
+            "generations": generations,
+            "population_size": population_size,
+            "fitness": fitness,
+            "n_best": n_best,
+            "breeding_rate": breeding_rate,
+            "crossover_rate": crossover_rate,
+            "mutation_rate": mutation_rate,
+        }
+        best_generation = sol
 
-if __name__ == "__main__":
-    problem = generate_problem(4)
+with open("best_params.txt", "w") as f:
+    json.dump(best_params, f)
 
-    # Define different sets of parameters
-    parameter_sets = [
-        {
-            "generations": 10000,
-            "population_size": 100,
-            "fitness": "scalar",
-            "n_best": 0.07,
-            "breeding_rate": 0.01,
-            "crossover_rate": 0.3,
-            "mutation_rate": 0.05,
-            "verbose": True,
-            "output_graph_name": "output1.png",
-            "tid": 1,
-        },
-        {
-            "generations": 5000,
-            "population_size": 50,
-            "fitness": "scalar",
-            "n_best": 0.1,
-            "breeding_rate": 0.02,
-            "crossover_rate": 0.4,
-            "mutation_rate": 0.1,
-            "verbose": True,
-            "output_graph_name": "output2.png",
-            "tid": 2,
-        },
-    ]
+print()
+print("Best Parameters:", best_params)
 
-    # Create a thread for each parameter set
-    threads = [
-        threading.Thread(target=solve_problem, args=(problem,), kwargs=params)
-        for params in parameter_sets
-    ]
-
-    # Start all threads
-    for thread in threads:
-        thread.start()
-
-    # Wait for all threads to finish
-    for thread in threads:
-        thread.join()

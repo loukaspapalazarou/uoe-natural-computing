@@ -236,18 +236,20 @@ def crossover(parent1: str, parent2: str, crossover_point_rate: float) -> (str, 
     child2 = parent2[:pivot] + parent1[pivot:]
     return child1, child2
 
-def create_graph(filename, generations, fitnesses):
+def create_plot(filename, generations, fitnesses):
     """
-    Create a graph to visualize the best fitness scores over the generations.
+    Create a plot to visualize the best fitness scores over the generations.
 
     Parameters:
-    - filename (str): The name of the output graph file (e.g., "output.png").
+    - filename (str): The name of the output plot file (e.g., "output.png").
     - generations (list): A list of generation numbers.
     - fitnesses (list): A list of corresponding best fitness scores.
 
     Returns:
     - None
     """
+    if filename == None:
+        return
     plt.figure(figsize=(10, 6))
     plt.plot(generations, fitnesses, linestyle='-')
     plt.title('Best Fitness Score Over Generations')
@@ -255,6 +257,7 @@ def create_graph(filename, generations, fitnesses):
     plt.ylabel('Best Fitness Score')
     plt.grid(True)
     plt.savefig(filename)
+    plt.close()
 
 def solver(
     problem,
@@ -267,7 +270,6 @@ def solver(
     mutation_rate=0.01,
     verbose=True,
     output_graph_name="output.png",
-    tid=None,
 ):
     """
     Sumplete game solver using a genetic algorithm
@@ -283,10 +285,9 @@ def solver(
     - mutation_rate (float, optional): The rate of mutation in candidate solutions. Default is 0.01.
     - verbose (bool, optional): Whether to print debug information. Default is True.
     - output_graph_name (str, optional): The name of the generated graph of the best fitness in terms of the generation. Default is "output.png".
-    - tid (int, optional): If a thread id is given it will be displayed in the log messages. Default is None
 
     Returns:
-    - A tuple with the solution if it is found and the generation the solution was found in, otherwise None
+    - A tuple with the solution if it is found and the generation the solution was found in. If no solution is found return a tuple with (None, generations)
     """
     # k is the detected dimension of the matrix
     k = validate_input(problem)
@@ -305,8 +306,6 @@ def solver(
     population = [generate_random_solution(k) for _ in range(population_size)]
     best_fitness = 0
     generation_best_fitnesses = []
-    if tid:
-        output_graph_name = "f{tid}_"+output_graph_name
 
     for generation in range(generations):
         # Calculate fitness of each candidate solution
@@ -325,10 +324,8 @@ def solver(
                 if verbose:
                     print("\n")
                     print_problem(problem)
-                    if tid:
-                        print(f"TID:{tid} | ", end="")
                     print(f"Solution found in generation {generation}: {population[i]}")
-                    create_graph(output_graph_name, range(generation), generation_best_fitnesses)
+                    create_plot(output_graph_name, range(generation), generation_best_fitnesses)
                 return (population[i], generation)
             population[i] = (population[i], fitness_val)
             best_fitness = max(best_fitness, fitness_val)
@@ -336,8 +333,6 @@ def solver(
         generation_best_fitnesses.append(best_fitness)
 
         if verbose and generation % 100 == 0:
-            if tid:
-                print(f"TID:{tid} | ", end="")
             print(f"Generation {generation}. Best fitness: {best_fitness}")
 
         # We now can sort the population based on fitness
@@ -364,8 +359,6 @@ def solver(
             new_population.append(generate_random_solution(k))
         population = new_population[:population_size]
     if verbose:
-        create_graph(output_graph_name, range(generations), generation_best_fitnesses)
-        if tid:
-            print(f"TID:{tid} | ", end="")
+        create_plot(output_graph_name, range(generations), generation_best_fitnesses)
         print(f"No solution found.")
-    return None
+    return (None, generations)
