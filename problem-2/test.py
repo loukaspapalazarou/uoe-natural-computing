@@ -2,8 +2,8 @@ import itertools
 import json
 from sumplete import solver, generate_problem
 
-PROBLEM_SIZE = 6
-NUM_PROBLEMS = 5
+PROBLEM_SIZE = 1
+NUM_PROBLEMS = 1
 
 # Define the parameter grid for the grid search
 population_size_list = [10, 20, 50, 100, 150, 200]
@@ -18,6 +18,8 @@ best_solution = None
 best_params = {}
 best_generation = float('inf')
 generations = 10_000
+
+logfile = open("out.log", "w")
 
 for (
     population_size,
@@ -34,7 +36,8 @@ for (
     crossover_rate_list,
     mutation_rate_list,
 ):
-    print(f"Testing parameters: population_size={population_size}, fitness={fitness}, n_best={n_best}, breeding_rate={breeding_rate}, crossover_rate={crossover_rate}, mutation_rate={mutation_rate}")
+    logfile.write(f"Testing parameters: population_size={population_size}, fitness={fitness}, n_best={n_best}, breeding_rate={breeding_rate}, crossover_rate={crossover_rate}, mutation_rate={mutation_rate}")
+    # print(f"Testing parameters: population_size={population_size}, fitness={fitness}, n_best={n_best}, breeding_rate={breeding_rate}, crossover_rate={crossover_rate}, mutation_rate={mutation_rate}")
     sols = []
     for problem in problems:
         sol = solver(
@@ -65,6 +68,8 @@ for (
         }
         best_generation = sol
 
+json.dump(best_params, logfile)
+logfile.close()
 with open("best_params.txt", "w") as f:
     json.dump(best_params, f)
 
