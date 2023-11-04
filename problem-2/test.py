@@ -2,8 +2,8 @@ import itertools
 import json
 from sumplete import solver, generate_problem
 
-PROBLEM_SIZE = 1
-NUM_PROBLEMS = 1
+PROBLEM_SIZE = 6
+NUM_PROBLEMS = 5
 
 # Define the parameter grid for the grid search
 population_size_list = [10, 20, 50, 100, 150, 200]
