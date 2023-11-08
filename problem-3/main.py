@@ -1,4 +1,4 @@
-from gp_outlines.gp_func import FUNCTIONS, TERMINALS, target_func
+from gp_outlines.gp_fibonacci import FUNCTIONS, TERMINALS, target_func
 from gp import run
 
 POP_SIZE        = 60   # population size
@@ -8,6 +8,12 @@ GENERATIONS     = 250  # maximal number of generations to run evolution
 TOURNAMENT_SIZE = 5    # size of tournament for tournament selection
 XO_RATE         = 0.8  # crossover rate 
 PROB_MUTATION   = 0.2  # per-node mutation probability 
+
+# def my_expression(x):
+#     result = (((0.1 ** 1) + (0.1 * 1)) * (x * 0)) ** ((((((x + 0) ** (1 * 0.1)) - ((1 - x) - (0.1 * 0))) - (((0.1 * 0.1) ** (1 * 0)) ** ((0 - 1) + (0 * 0.1)))) ** 0.1) + 0) * (0 ** x)
+#     return result
+# print(target_func(10))
+# exit()
 
 if __name__ == '__main__':
     run(
